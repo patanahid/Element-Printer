@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Print Elements",
+    "version": "1.0",
+    "description": "A Chrome extension to select and highlight elements on a webpage.",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {}
+}
