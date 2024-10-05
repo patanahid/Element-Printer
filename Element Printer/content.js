@@ -397,6 +397,18 @@
           <input type="number" id="printDelay" min="0" max="60" value="10" placeholder="Delay in seconds">
         </div>
         <div class="form-group">
+          <label for="imageType">
+            Image Type
+            <span class="info-icon tooltip">i
+              <span class="tooltiptext">Select the image format for capturing the element</span>
+            </span>
+          </label>
+          <select id="imageType">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="elementDepth">
             Element depth
             <span class="info-icon tooltip">i
@@ -412,8 +424,8 @@
           <button class="action-btn tooltip" id="preview">
             Preview
           </button>
-          <button class="action-btn tooltip" id="copyHtml">
-            Copy HTML
+          <button class="action-btn tooltip" id="getImage">
+            Get Image
           </button>
           <button class="action-btn accent tooltip" id="print">
             Print
@@ -421,6 +433,13 @@
         </div>
       </div>
     `;
+
+    // Add HTML2Canvas library
+    const script = document.createElement('script');
+    script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+    script.async = true;
+    document.head.appendChild(script);
+
     document.body.appendChild(modal);
 
     // Add modal styles to the document
@@ -432,17 +451,18 @@
     const themeToggle = document.getElementById('themeToggle');
     const minimizeToggle = document.getElementById('minimizeToggle');
     const closeButton = document.getElementById('closeButton');
-    const howToUseButton = document.getElementById('howToUseButton'); // New button
+    const howToUseButton = document.getElementById('howToUseButton');
     const selectorContent = document.getElementById('selectorContent');
     const selectedElementInput = document.getElementById('selectedElement');
-    const preserveCssCheckbox = document.getElementById('preserveCss');
+    const preserv eCssCheckbox = document.getElementById('preserveCss');
     const printDelayInput = document.getElementById('printDelay');
+    const imageTypeSelect = document.getElementById('imageType');
     const elementDepthSlider = document.getElementById('elementDepth');
     const pickAgainButton = document.getElementById('pickAgain');
     const previewButton = document.getElementById('preview');
-    const copyHtmlButton = document.getElementById('copyHtml');
+    const getImageButton = document.getElementById('getImage');
     const printButton = document.getElementById('print');
-    const modalHeader = document.getElementById('modalHeader'); // For dragging
+    const modalHeader = document.getElementById('modalHeader');
 
     // Variables to keep track of selected element and highlighting
     let selectedElement = null;
@@ -638,26 +658,22 @@
         printWindow.focus();
     };
 
-    // Function to copy the selected element's HTML to the clipboard
-    const copyElementHTML = () => {
+    // Function to capture and download the selected element as an image
+    const captureElementAsImage = () => {
         if (!selectedElement) return;
 
-        const clonedElement = cloneElementWithCSS(selectedElement);
-        let content = clonedElement.outerHTML;
-
-        if (preserveCssCheckbox.checked) {
-            const css = getFullCSS();
-            content = `<style>${css}</style>\n${content}`;
-        }
-
-        navigator.clipboard.writeText(content)
-            .then(() => {
-                // Optional: Display a success message
-                console.log('HTML copied to clipboard!');
-            })
-            .catch((error) => {
-                console.error('Failed to copy HTML:', error);
-            });
+        html2canvas(selectedElement, {
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+        }).then(canvas => {
+            const imageType = imageTypeSelect.value;
+            const imageDataUrl = canvas.toDataURL(`image/${imageType}`);
+            const link = document.createElement('a');
+            link.href = imageDataUrl;
+            link.download = `captured-element.${imageType}`;
+            link.click();
+        });
     };
 
     // Function to preview the selected element
@@ -743,10 +759,10 @@
     themeToggle.addEventListener('click', toggleTheme);
     minimizeToggle.addEventListener('click', toggleContentVisibility);
     closeButton.addEventListener('click', closeModal);
-    howToUseButton.addEventListener('click', openHowToUse); // New event listener
+    howToUseButton.addEventListener('click', openHowToUse);
     pickAgainButton.addEventListener('click', startSelection);
     previewButton.addEventListener('click', previewElement);
-    copyHtmlButton.addEventListener('click', copyElementHTML);
+    getImageButton.addEventListener('click', captureElementAsImage);
     printButton.addEventListener('click', printElement);
     elementDepthSlider.addEventListener('input', updateSelectedElementInput);
 
