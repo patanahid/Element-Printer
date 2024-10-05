@@ -454,7 +454,7 @@
     const howToUseButton = document.getElementById('howToUseButton');
     const selectorContent = document.getElementById('selectorContent');
     const selectedElementInput = document.getElementById('selectedElement');
-    const preserv eCssCheckbox = document.getElementById('preserveCss');
+    const preserveCssCheckbox = document.getElementById('preserveCss');
     const printDelayInput = document.getElementById('printDelay');
     const imageTypeSelect = document.getElementById('imageType');
     const elementDepthSlider = document.getElementById('elementDepth');
