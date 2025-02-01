@@ -1,15 +1,32 @@
 {
     "manifest_version": 3,
-    "name": "Print Elements",
+    "name": "Element Printer",
     "version": "1.0",
     "description": "A Chrome extension to select and highlight elements on a webpage.",
     "permissions": [
-        "activeTab",
-        "storage",
-        "scripting"
+      "activeTab",
+      "storage",
+      "scripting"
+    ],
+    "host_permissions": [
+      "<all_urls>"
     ],
     "background": {
-        "service_worker": "background.js"
+      "service_worker": "background.js"
     },
-    "action": {}
-}
+    "action": {},
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "html2canvas.min.js",
+          "html2pdf.bundle.min.js"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
+    ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    }
+  }
